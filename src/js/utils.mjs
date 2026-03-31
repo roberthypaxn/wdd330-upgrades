@@ -27,7 +27,13 @@ export function getParams(lookup) {
   return params.get(lookup);
 }
 
-export function renderListWithTemplate(templateFn, parentElement, data, position = "afterBegin",clear = false) {
+export function renderListWithTemplate(
+  templateFn,
+  parentElement,
+  data,
+  position = "afterBegin",
+  clear = false
+) {
   if (clear) {
     parentElement.innerHTML = "";
   }
@@ -36,18 +42,17 @@ export function renderListWithTemplate(templateFn, parentElement, data, position
 }
 
 async function renderWithTemplate(element, data, position = "afterBegin") {
-//Render the template using just javascript with no libraries
-  element.innerHTML = data; 
+  //Render the template using just javascript with no libraries
+  element.innerHTML = data;
 }
 
 export async function loadHeaderFooter() {
   const header = qs("header");
   const footer = qs("footer");
   const headerTemplate = await loadTemplate("../partials/header.html");
-  const footerTemplate =  await loadTemplate("../partials/footer.html");
+  const footerTemplate = await loadTemplate("../partials/footer.html");
   renderWithTemplate(header, headerTemplate);
   renderWithTemplate(footer, footerTemplate);
-  
 }
 
 export async function loadTemplate(path) {

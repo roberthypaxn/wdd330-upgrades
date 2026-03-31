@@ -1,13 +1,15 @@
-import ExternalServices from "./ExternalServices.mjs"
-import { getLocalStorage,
+import ExternalServices from "./ExternalServices.mjs";
+import {
+  getLocalStorage,
   renderListWithTemplate,
-  alertMessage, setLocalStorage, removeAllAlerts} from "./utils.mjs";
-
+  alertMessage,
+  setLocalStorage,
+  removeAllAlerts,
+} from "./utils.mjs";
 
 function CardTemplate(item) {
-    
-    let icons = "";
-    return `<li class="cart-card divider">
+  let icons = "";
+  return `<li class="cart-card divider">
     <ul class="cart-card__icons">${icons}</ul>
     <a href="#" class="cart-card__image">
       <img
@@ -21,7 +23,9 @@ function CardTemplate(item) {
     <p class="cart-card__color">${item.Colors[0].ColorName}</p>
     <p class="cart-card__quantity">qty: ${item.quantity}</p>
     <p class="cart-card__price">Item Price: $${item.FinalPrice}</p>
-    <p class="cart-card__total">Total Price: $${(item.FinalPrice*item.quantity).toFixed(2)}</p>
+    <p class="cart-card__total">Total Price: $${(
+      item.FinalPrice * item.quantity
+    ).toFixed(2)}</p>
     <p class="item__id" hidden>${item.Id}</p>
   </li>`;
 }
@@ -73,7 +77,7 @@ function formDataToJSON(formElement) {
 function packageItems(items) {
   // convert the list of products from localStorage to the simpler form required for the checkout process. Array.map would be perfect for this.
   const simplifiedItems = items.map((item) => {
-   // console.log(item);
+    // console.log(item);
     return {
       id: item.Id,
       price: item.FinalPrice,
@@ -95,31 +99,38 @@ export default class CheckoutProcess {
     this.tax = 0;
     this.orderTotal = 0;
   }
-  
+
   init() {
     this.list = getLocalStorage(this.key);
-    renderListWithTemplate(CardTemplate, this.cart, this.list, "afterBegin", true);
-    document.querySelector(".button").addEventListener("click", this.checkout.bind(this));
+    renderListWithTemplate(
+      CardTemplate,
+      this.cart,
+      this.list,
+      "afterBegin",
+      true
+    );
+    document
+      .querySelector(".button")
+      .addEventListener("click", this.checkout.bind(this));
     this.calculateItemSummary();
     this.calculateOrdertotal();
   }
-  
+
   calculateItemSummary() {
-      
     // calculate and display the total amount of the items in the cart, and the number of items.
-      let totalQuantity = this.list.reduce(function(total, currentItem) {
-        return total + currentItem.quantity;
-      }, 0);
-      const itemCount = document.querySelector(".item__count")
-      itemCount.innerHTML = `${totalQuantity} <span>Items</span>`;
+    let totalQuantity = this.list.reduce(function (total, currentItem) {
+      return total + currentItem.quantity;
+    }, 0);
+    const itemCount = document.querySelector(".item__count");
+    itemCount.innerHTML = `${totalQuantity} <span>Items</span>`;
   }
-    
+
   calculateOrdertotal() {
     // calculate the shipping and tax amounts. Then use them to along with the cart total to figure out the order total
-    this.list.forEach(item => {
-      const itemShipment = 10+ ((parseInt(item.quantity)-1)*2)
-      const itemTotal = parseFloat(item.quantity)*parseFloat(item.FinalPrice);
-      const itemTax = (itemTotal + itemShipment) * 6 / 100;
+    this.list.forEach((item) => {
+      const itemShipment = 10 + (parseInt(item.quantity) - 1) * 2;
+      const itemTotal = parseFloat(item.quantity) * parseFloat(item.FinalPrice);
+      const itemTax = ((itemTotal + itemShipment) * 6) / 100;
       const itemOrder = itemTotal + itemTax + itemShipment;
 
       this.itemTotal += itemTotal;
@@ -128,9 +139,14 @@ export default class CheckoutProcess {
       this.orderTotal += itemOrder;
     });
     // display the totals.
-    this.displayOrderTotals(this.itemTotal, this.shipping, this.tax, this.orderTotal);
+    this.displayOrderTotals(
+      this.itemTotal,
+      this.shipping,
+      this.tax,
+      this.orderTotal
+    );
   }
-  
+
   displayOrderTotals(total, ship, tax, grossTotal) {
     // once the totals are all calculated display them in the order summary page
     const subtotal = document.querySelector(".sub__total");
@@ -149,13 +165,12 @@ export default class CheckoutProcess {
     console.log("button pressed");
     // build the data object from the calculated fields, the items in the cart, and the information entered into the form
     const formElement = document.forms["checkout"];
-    
-    const checkStatus = formElement.checkValidity();
-    
-    formElement.reportValidity();
-    
-    if(checkStatus){
 
+    const checkStatus = formElement.checkValidity();
+
+    formElement.reportValidity();
+
+    if (checkStatus) {
       const json = formDataToJSON(formElement);
       // add totals, and item details
       json.orderDate = new Date();
@@ -180,7 +195,6 @@ export default class CheckoutProcess {
         }
         console.log(err);
       }
-    };    
-
+    }
   }
 }
