@@ -6,7 +6,7 @@ async function convertToJson(res) {
     return data;
   } else {
     console.log("This is the end!");
-    throw { name: 'servicesError', message: data };
+    throw { name: "servicesError", message: data };
   }
 }
 
@@ -29,7 +29,7 @@ export default class ExternalServices {
   async findProductById(id) {
     // const products = await this.getData();
     // return products.find((item) => item.Id === id);
-    const response = await fetch(`${baseURL}/product/${id}`)
+    const response = await fetch(`${baseURL}/product/${id}`);
     const data = await convertToJson(response);
     return data.Result;
   }
@@ -42,7 +42,7 @@ export default class ExternalServices {
       },
       body: JSON.stringify(order),
     };
-    console.log('Checkout submitted!');
+    console.log("Checkout submitted!");
     return await fetch(baseURL + "/checkout/", options).then(convertToJson);
   }
 }
